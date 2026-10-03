@@ -1,0 +1,23 @@
+# Local secrets and machine config. No application source is in this
+# workspace yet. These rules are here so later commits do not pick up
+# credentials, dataset copies, or model binaries by accident.
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+**/secrets/
+
+# Research copies and trained artifacts. Keep them out of git unless a
+# dataset license explicitly allows redistribution.
+data/raw/
+data/private/
+data/processed/
+models/*.tflite
+models/*.onnx
+models/*.bin
+models/*.pt
+models/*.pth
