@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>SENTRIX CORE — Security Plan and Threat Model</title>
+<style>
+  :root {
+    --ink: #142033;
+    --navy: #0c1b30;
+    --teal: #0e8f84;
+    --muted: #5c6b7c;
+    --line: #e4dfd6;
+    --sand: #f6f3ed;
+    --soft: #f3f7f6;
+    --amber: #8a5a28;
+    --crit: #8c2f2f;
+  }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  @page {
+    size: A4;
+    margin: 16mm 15mm 18mm;
+    @bottom-left {
+      content: "SENTRIX CORE  ·  Security Plan and Threat Model  ·  Alryada University";
+      font-family: "Segoe UI", sans-serif;
+      font-size: 8pt;
+      color: #8a94a1;
+    }
+    @bottom-right {
+      content: counter(page);
+      font-family: "Segoe UI", sans-serif;
+      font-size: 8pt;
+      color: #8a94a1;
+    }
+  }
+  @page :first { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+  html, body { margin: 0; padding: 0; color: var(--ink); font-family: "Segoe UI", Calibri, sans-serif; font-size: 11pt; line-height: 1.45; }
+  h1 { font-size: 18pt; line-height: 1.2; margin: 0 0 3mm; }
+  h2 { font-size: 14pt; margin: 7mm 0 2.5mm; color: var(--navy); border-bottom: 2px solid var(--teal); padding-bottom: 1.2mm; page-break-after: avoid; }
+  h3 { font-size: 12pt; margin: 4.5mm 0 1.5mm; color: var(--navy); page-break-after: avoid; }
+  p { margin: 0 0 2.6mm; }
+  ul, ol { margin: 0 0 3mm; padding-left: 5mm; }
+  li { margin: 0 0 1.2mm; }
+  .cover {
+    page: first;
+    height: 297mm;
+    background: var(--navy);
+    color: #f4f7f8;
+    padding: 22mm 18mm 16mm;
+    display: flex;
+    flex-direction: column;
+    page-break-after: always;
+  }
+  .cover .brand { display: flex; align-items: center; gap: 4mm; }
+  .cover img { width: 16mm; height: 16mm; object-fit: contain; background: #fff; border-radius: 3mm; }
+  .cover .name { font-size: 14pt; letter-spacing: 0.12em; text-transform: uppercase; }
+  .cover .name span { color: #7dcec6; }
+  .cover .rule { width: 28mm; height: 1.2mm; background: var(--teal); margin: 14mm 0 8mm; }
+  .cover h1 { font-size: 32pt; font-weight: 650; color: #fff; max-width: 150mm; }
+  .cover .sub { font-size: 13.5pt; color: #c9d4df; max-width: 150mm; margin-top: 4mm; }
+  .cover .spacer { flex: 1; }
+  .cover .meta { border-top: 1px solid rgba(255,255,255,0.18); padding-top: 6mm; font-size: 11pt; line-height: 1.6; color: #d5dee8; }
+  .cover .meta strong { color: #fff; }
+  .kicker { color: var(--teal); font-size: 9pt; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; margin-bottom: 1.5mm; }
+  .note, .callout { background: var(--sand); border-left: 3px solid var(--teal); padding: 3mm 4mm; margin: 0 0 4mm; }
+  .callout.warn { border-left-color: var(--amber); }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 4mm; font-size: 9.6pt; page-break-inside: avoid; }
+  th, td { text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); padding: 1.8mm 2mm; }
+  th { background: var(--soft); color: var(--navy); font-weight: 650; }
+  .tag { display: inline-block; font-size: 8pt; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.4mm 1.6mm; border-radius: 2mm; background: var(--soft); color: var(--teal-deep, #0b6e66); }
+  .tag.now { background: #e7f6f4; color: #0b6e66; }
+  .tag.later { background: #f8f1e8; color: var(--amber); }
+  .tag.high { background: #f8e8e8; color: var(--crit); }
+  .small { color: var(--muted); font-size: 9.5pt; }
+  .toc a { color: inherit; text-decoration: none; }
+  .toc td:last-child { text-align: right; color: var(--muted); width: 12mm; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="brand">
+    <img src="../sentrix-logo.png" alt="SentriX" />
+    <div class="name">SentriX <span>Core</span></div>
+  </div>
+  <div class="rule"></div>
+  <div class="kicker" style="color:#7dcec6;">Graduation project · Faculty of Computers and Artificial Intelligence</div>
+  <h1>Security Plan and Threat Model</h1>
+  <p class="sub">A staged security document for the SENTRIX CORE personal-safety system: what must be protected, who can reach it, and what the project will do at each stage of development.</p>
+  <div class="spacer"></div>
+  <div class="meta">
+    <strong>Alryada University</strong><br />
+    Prepared by Nourseen Tarek<br />
+    October 2026 · Academic submission<br />
+    Status: security documentation for a project still in development. The wearable and the full ecosystem are not deployed.
+  </div>
+</section>
+
+<p class="kicker">Document purpose</p>
+<h1>1. Why this document exists</h1>
+<p>SENTRIX CORE is a personal-safety system. In its intended form it watches motion, health-related signals, sound, and location, and it can raise an emergency alert. Those are sensitive functions. A mistake can expose where a person is, expose health or audio information, or send a false alert to emergency services.</p>
+<p>This document is the project security chapter. It has two parts. The <strong>security plan</strong> says what the team will do to reduce those risks, stage by stage. The <strong>threat model</strong> says what is worth protecting, who could reach it, and what harm that would cause.</p>
+<div class="note">
+  This is a written plan for the graduation project. It is not a statement that a commercial product is already secure, and it is not a statement that the wearable has been built. Controls are marked as current work, prototype work, planned hardware, or future system behavior.
+</div>
+
+<h2>1.1 How to read the stages</h2>
+<table>
+  <thead><tr><th>Stage</th><th>What it is</th><th>Security meaning</th></tr></thead>
+  <tbody>
+    <tr><td>Current</td><td>Mobile and software work, and AI experiments on datasets that already existed.</td><td>Protect project files and be accurate about data. Do not contact real emergency services from a demo.</td></tr>
+    <tr><td>Prototype</td><td>Development kits used to test sensors, the processor, Bluetooth, and cellular.</td><td>The kit is laboratory equipment. Debug access is expected and must be labeled as such.</td></tr>
+    <tr><td>Planned hardware</td><td>A custom band, if it is finished before the demonstration, following the Hardware Design Specification.</td><td>Physical SOS button, controlled firmware update, and no claim of a secure element that is not on the board.</td></tr>
+    <tr><td>Future system</td><td>Cloud, guardians, nearby helpers, evidence, and operator or administrator dashboards.</td><td>Specified in the research paper. Not deployed. Access rules below are a recommendation until the team approves them.</td></tr>
+  </tbody>
+</table>
+
+<h2>1.2 Hardware direction used by this plan</h2>
+<p>The current hardware direction is the Hardware Design Specification: nRF5340, nRF9151, BMI270, MAX86176, MAX30208, IM69D130, nPM1300, a physical SOS button, Bluetooth Low Energy, LTE-M/NB-IoT, and GNSS. That specification is a pre-schematic design. It is not a built device.</p>
+<p>An earlier hardware description in Section 13 of the research paper used a different processor, modem, and a secure element (NXP SE050). That description is kept as design history. This plan does not add a secure element, because the current bill of materials does not include one.</p>
+
+<h2>2. Security plan</h2>
+<p>The plan follows the work the team can actually do. It does not treat a screen drawn in the research paper as a finished security feature.</p>
+
+<h3>2.1 Current stage — software and AI experiments</h3>
+<ul>
+  <li>Experiments use pre-existing datasets collected by other parties, including public research sets. The team did not collect GPS, audio, medical, or child data from real users for these experiments.</li>
+  <li>Those files stay separate from any future records of real SENTRIX users. The project report must describe them as externally collected datasets.</li>
+  <li>Dataset name, source, and license are recorded before a file is placed inside a demonstration package. A license that has not been read is not described as permission to redistribute the file.</li>
+  <li>Passwords, API keys, and private keys are not written into source code. Raw dataset copies and model binaries are kept out of the Git repository.</li>
+  <li>A demonstration SOS control stays inside the project. It does not call, text, or packet a real emergency service unless the team makes a separate, explicit decision to do so.</li>
+  <li>When the mobile application source is reviewed, any stored token is moved to the phone’s secure storage, sessions end on logout, and server connections are recorded and kept off cleartext HTTP.</li>
+</ul>
+<p class="small">The mobile application is under development. Its source was not in the project folder inspected for this document, so login, storage, and network behavior are requirements for that code, not features already verified here.</p>
+
+<h3>2.2 Prototype stage — development kits</h3>
+<ul>
+  <li>Each kit is labeled as a laboratory prototype, not as the finished SENTRIX band.</li>
+  <li>Signals on the kit are bench signals, externally collected files, or replay. A live stream of a real person’s location or voice is not used.</li>
+  <li>Programming and serial debug ports may stay open on a kit. That fact is written in the lab notes. The same open port is not later described as a closed product.</li>
+  <li>The serial link to the cellular modem is disconnected at the end of a session. SIM credentials are not printed in logs.</li>
+  <li>Bluetooth pairing is chosen and written down before a phone is paired. Until that choice exists, a Bluetooth test is only a connectivity test.</li>
+  <li>A live cellular subscription is used only after an explicit decision. The lab configuration does not contain a real emergency-service address.</li>
+</ul>
+
+<h3>2.3 Planned stage — custom wearable</h3>
+<p>These items apply only if a custom board is built. They are acceptance checks, not completed work.</p>
+<ul>
+  <li>The physical SOS button is debounced in firmware and does not depend on an AI model. That matches the Hardware Design Specification.</li>
+  <li>Before the board is presented as product-like, the team records whether boot checks the firmware image, and whether debug pads are removed, locked, or left as an accepted engineering risk.</li>
+  <li>Key storage is named honestly. If no secure storage is used, the report says so. TrustZone on the nRF5340 is a chip capability. It is not in use until a firmware split is designed.</li>
+  <li>A failed firmware update must still leave the local SOS button able to be detected. Sending that press off the device can wait until the radio recovers.</li>
+  <li>Factory reset clears Bluetooth bonds and local logs and still leaves the SOS button working.</li>
+</ul>
+
+<h3>2.4 Future stage — full SENTRIX CORE ecosystem</h3>
+<p>The research paper describes guardians, a Nearby Rescue Network, evidence storage, an operator dashboard, and an administrator dashboard. Those parts are not deployed. Before they are built, the project needs an approved access rule, authenticated emergency messages, a retention period, and a deletion rule. No cloud vendor is chosen in the project documents, and this plan does not invent one.</p>
+
+<h3>2.5 Emergency behavior</h3>
+<table>
+  <thead><tr><th>Topic</th><th>What the project documents say</th><th>What this plan requires</th></tr></thead>
+  <tbody>
+    <tr><td>Starting an alert on the planned hardware</td><td>A physical SOS button, independent of the AI decision.</td><td>Use that button as the hardware start control. It is not built yet.</td></tr>
+    <tr><td>Touch gestures in the research paper</td><td>Section 7.2, Section 13.10, and one case study disagree about the same presses.</td><td>Treat those maps as an unresolved design conflict. Do not implement them as the security rule.</td></tr>
+    <tr><td>Who may cancel an alert</td><td>Not settled, once the gesture conflict is set aside.</td><td>A written cancel policy is required before an emergency demonstration.</td></tr>
+    <tr><td>Silent emergency, helpers, operators</td><td>Described in the research paper.</td><td>Future behavior. Not implemented.</td></tr>
+    <tr><td>Real emergency services</td><td>Case studies show guardian authorization. One screen describes a simulation that does not dispatch.</td><td>The academic demonstration does not contact a real service unless that decision is made separately.</td></tr>
+  </tbody>
+</table>
+
+<h3>2.6 Privacy</h3>
+<p>Two data classes stay separate.</p>
+<ul>
+  <li><strong>Current research data.</strong> Copies of datasets collected by external sources. The team is not the collector. Source terms still have to be read before redistribution. This document does not claim that those terms have been satisfied.</li>
+  <li><strong>Future SENTRIX user data.</strong> Location, audio, health-related signals, and possible data about children or other dependents, collected by a future deployment. That data does not exist in the current experiments.</li>
+</ul>
+<p>The project is being developed in Egypt. A future system that processes personal data of real people would need a privacy assessment under Egypt’s Personal Data Protection Law, Law No. 151 of 2020. That assessment is not done in this document, and this document is not legal advice. GDPR and HIPAA are reference names only. The project documents do not establish that either law applies, and this plan does not claim compliance with them.</p>
+
+<h3>2.7 Recommended access rules</h3>
+<p>The team has not approved every permission. The table below is a recommendation for approval. It is not an implemented feature. It follows least privilege: a person receives only the access the task needs. An administrator manages the platform and does not receive routine access to user content.</p>
+<table>
+  <thead><tr><th>Data or action</th><th>User</th><th>Guardian</th><th>Nearby helper</th><th>Medical helper</th><th>Operator</th><th>Administrator</th></tr></thead>
+  <tbody>
+    <tr><td>Own profile and health profile</td><td>Own</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No content</td></tr>
+    <tr><td>Live location</td><td>Own</td><td>Linked person, if granted</td><td>Approximate only until they accept; precise only during that incident</td><td>Same as helper</td><td>Assigned incident only</td><td>No</td></tr>
+    <tr><td>Location history</td><td>Own</td><td>Only if granted</td><td>No</td><td>No</td><td>Incident window</td><td>No</td></tr>
+    <tr><td>Heart rate, SpO2, ECG</td><td>Own</td><td>Only if granted</td><td>No</td><td>During an accepted incident</td><td>Assigned incident</td><td>No</td></tr>
+    <tr><td>Audio or video</td><td>Own</td><td>Only if granted for that incident</td><td>No</td><td>No</td><td>Assigned incident</td><td>No</td></tr>
+    <tr><td>Start SOS</td><td>Own</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+    <tr><td>Cancel an active alert</td><td>Own, after a written policy</td><td>Not by default</td><td>No</td><td>No</td><td>No</td><td>No</td></tr>
+    <tr><td>Firmware and model updates</td><td>No</td><td>No</td><td>No</td><td>No</td><td>No</td><td>Yes, with a recorded action</td></tr>
+  </tbody>
+</table>
+<p class="small">ECG applies only if the MAX86176 path in the Hardware Design Specification is built. Helper and operator access ends when the incident closes. A future child profile, if added, is owned by the linked guardian under this recommendation.</p>
+
+<h2>3. Threat model</h2>
+<p>A threat model names the things that matter, the people who could reach them, and the damage if they do. Threats that belong to a later stage are labeled. They are not claimed to be happening now.</p>
+
+<h3>3.1 Assets</h3>
+<h3>Current project assets</h3>
+<table>
+  <thead><tr><th>Asset</th><th>Why it matters</th></tr></thead>
+  <tbody>
+    <tr><td>Design documents and this security chapter</td><td>They are the academic record of the system.</td></tr>
+    <tr><td>Copies of externally collected datasets</td><td>They may be restricted by the original source. They are not data the team collected from users.</td></tr>
+    <tr><td>Trained models and experiment results</td><td>Unpublished academic work, once those files exist on team machines.</td></tr>
+    <tr><td>Mobile application source</td><td>Under development. Any accounts or tokens inside it must be reviewed with the source.</td></tr>
+  </tbody>
+</table>
+<h3>Future SENTRIX assets</h3>
+<p>These are specified by the research paper or the hardware direction. They are not deployed.</p>
+<table>
+  <thead><tr><th>Asset</th><th>Examples</th></tr></thead>
+  <tbody>
+    <tr><td>Identity</td><td>Accounts, sessions, guardian links, helper identity</td></tr>
+    <tr><td>Location</td><td>Live position, route history, safe zones</td></tr>
+    <tr><td>Body and voice</td><td>Heart rate, SpO2, ECG if built, audio, video evidence</td></tr>
+    <tr><td>Behavior model</td><td>Digital Twin routines and places</td></tr>
+    <tr><td>Safety state</td><td>Emergency status, SOS, incident record</td></tr>
+    <tr><td>Device trust</td><td>Firmware, on-device models, Bluetooth bond, SIM or eSIM profile</td></tr>
+  </tbody>
+</table>
+
+<h3>3.2 Who could cause harm</h3>
+<table>
+  <thead><tr><th>Person</th><th>When this is realistic</th></tr></thead>
+  <tbody>
+    <tr><td>Someone with a copy of the project files or a shared computer</td><td>Now</td></tr>
+    <tr><td>Someone with physical access to a development kit and its debugger</td><td>Prototype</td></tr>
+    <tr><td>A nearby Bluetooth radio during a kit test</td><td>Prototype</td></tr>
+    <tr><td>Someone who loads unofficial firmware, or fakes a sensor reading on the bench</td><td>Prototype and planned hardware</td></tr>
+    <tr><td>Someone who steals a future phone or band</td><td>Later</td></tr>
+    <tr><td>A nearby helper, guardian, or administrator who sees more than their role allows</td><td>Later</td></tr>
+  </tbody>
+</table>
+<p>An attack on a live public cloud or on a fleet of production SIM cards is outside the current academic stage. Those cases stay in the future column so they are not forgotten. They are not current operating threats.</p>
+
+<h3>3.3 Important threats</h3>
+<table>
+  <thead><tr><th>ID</th><th>Threat</th><th>Stage</th><th>Impact</th></tr></thead>
+  <tbody>
+    <tr><td>T1</td><td>External datasets are described as data the team collected, or mixed with future user records.</td><td><span class="tag now">Now</span></td><td>The project record is wrong, and a later privacy review starts from the wrong data.</td></tr>
+    <tr><td>T2</td><td>A restricted dataset is copied into the demonstration application.</td><td><span class="tag now">Now</span></td><td>Possible breach of the source terms. Licenses are not verified in this document.</td></tr>
+    <tr><td>T3</td><td>A password or API key is committed once source code is added.</td><td><span class="tag now">Now</span></td><td>Credential theft. A scan of this project folder found no source secrets.</td></tr>
+    <tr><td>T4</td><td>Unpublished models are copied from an unprotected machine.</td><td><span class="tag now">Now</span></td><td>Loss of academic work.</td></tr>
+    <tr><td>T5</td><td>An open debug port on a kit is later described as a finished product.</td><td><span class="tag later">Prototype</span></td><td>Firmware and logs can be read or changed.</td></tr>
+    <tr><td>T6</td><td>Bluetooth is tested with no defined pairing.</td><td><span class="tag later">Prototype</span></td><td>A nearby radio can attach to the lab device.</td></tr>
+    <tr><td>T7</td><td>The modem serial link is left open in the lab.</td><td><span class="tag later">Prototype</span></td><td>Unwanted transmissions, including a false SOS.</td></tr>
+    <tr><td>T8</td><td>A real person’s live location or audio is used on the kit.</td><td><span class="tag later">Prototype</span></td><td>A lab test becomes processing of personal data.</td></tr>
+    <tr><td>T9</td><td>A demonstration SOS contacts a real emergency service.</td><td><span class="tag high">Demo</span></td><td>A false emergency.</td></tr>
+    <tr><td>T10</td><td>Debug remains open on a custom board shown as the product.</td><td><span class="tag later">Planned</span></td><td>Same exposure as T5, on hardware that looks finished.</td></tr>
+    <tr><td>T11</td><td>Unofficial firmware runs on the custom board.</td><td><span class="tag later">Planned</span></td><td>Safety logic can be removed. The boot check is not designed yet.</td></tr>
+    <tr><td>T12</td><td>A future phone or band is stolen.</td><td><span class="tag later">Future</span></td><td>Location and SOS continue until the device is unpaired. Unpair is not specified yet.</td></tr>
+    <tr><td>T13</td><td>A helper receives a precise location outside an accepted incident.</td><td><span class="tag later">Future</span></td><td>Tracking of a vulnerable person.</td></tr>
+    <tr><td>T14</td><td>A guardian or administrator account is used to read content the role does not need.</td><td><span class="tag later">Future</span></td><td>Broad disclosure of location, health, or audio.</td></tr>
+    <tr><td>T15</td><td>An unofficial model or firmware update is installed.</td><td><span class="tag later">Future</span></td><td>The wrong emergency decision. Update signing is not designed yet.</td></tr>
+    <tr><td>T16</td><td>A sensor reading is injected on the bench.</td><td><span class="tag later">Prototype</span></td><td>A false fall, or a false “all clear.” This is different from a broken sensor.</td></tr>
+    <tr><td>T17</td><td>The conflicting touch-gesture map is coded as the cancel rule.</td><td><span class="tag high">Any build</span></td><td>An alert can be started or stopped by the wrong press.</td></tr>
+    <tr><td>T18</td><td>An evidence file and its hash can both be edited by the same person.</td><td><span class="tag later">Future</span></td><td>The stored hash no longer proves the file is unchanged.</td></tr>
+  </tbody>
+</table>
+
+<h3>3.4 What matters at this stage</h3>
+<p>The realistic work now is T1, T2, T3, and T4. Prototype threats T5 through T9 apply when a development kit is powered. Future threats stay in the requirements so the later design does not ignore them. They are not a description of a deployed system.</p>
+<div class="callout warn">
+  The single demonstration risk with immediate real-world harm is T9: a test SOS that leaves the lab and reaches a real emergency service. Until the team decides otherwise, demonstrations stay inside the project.
+</div>
+
+<h2>4. Risks still open</h2>
+<table>
+  <thead><tr><th>Rank</th><th>Risk</th></tr></thead>
+  <tbody>
+    <tr><td>Critical</td><td>Mobile source must still be reviewed for login, storage, and network behavior.</td></tr>
+    <tr><td>Critical</td><td>The exact dataset files and their licenses are not listed in this document.</td></tr>
+    <tr><td>Critical</td><td>It is still undecided whether any demonstration may contact real emergency services.</td></tr>
+    <tr><td>High</td><td>Bluetooth pairing, the modem serial link, and debug policy are undecided, and kits are the next hardware step.</td></tr>
+    <tr><td>High</td><td>Who may cancel an alert is undecided, while the research paper contains conflicting gesture descriptions.</td></tr>
+    <tr><td>Medium</td><td>Key storage, secure boot, and remote update are not designed. The current bill of materials has no secure element.</td></tr>
+    <tr><td>Medium</td><td>The access table in Section 2.7 is a recommendation. It is not an approved requirement.</td></tr>
+    <tr><td>Low</td><td>TrustZone is unused. The report must not describe it as an active control.</td></tr>
+  </tbody>
+</table>
+
+<h2>5. Decisions the team still has to make</h2>
+<p>This plan does not close these decisions.</p>
+<table>
+  <thead><tr><th>Decision</th><th>Why it matters</th></tr></thead>
+  <tbody>
+    <tr><td>Which datasets are actually used, and what their licenses allow</td><td>Current privacy and a lawful demonstration package.</td></tr>
+    <tr><td>Whether the demo uses replayed or simulated data in addition to those datasets</td><td>Reviewers must be able to tell the data classes apart.</td></tr>
+    <tr><td>Whether a demo may use a live cellular network</td><td>A live registration can transmit from the laboratory.</td></tr>
+    <tr><td>Whether a demo may ever contact real emergency services</td><td>Prevents a false emergency.</td></tr>
+    <tr><td>Who may cancel an active alert</td><td>Prevents the wrong person from stopping a real alert.</td></tr>
+    <tr><td>Approve, edit, or reject the access table</td><td>Needed before guardian or helper accounts are built.</td></tr>
+    <tr><td>Which safety decisions later move onto the wearable</td><td>Phone-independent operation is only true for decisions that actually run on the band. Distress-audio and panic-voice models stay on the phone and cloud placements in the research paper until a decision moves them.</td></tr>
+    <tr><td>Bluetooth pairing method</td><td>Needed before the first phone-to-kit pairing is treated as secure.</td></tr>
+    <tr><td>Debug pads on a finished board</td><td>Open programming access on a product-like demo exposes the firmware.</td></tr>
+    <tr><td>Secure boot, update signing, TrustZone, and whether a secure element is ever added</td><td>Needed only when custom firmware is presented as product-like. No algorithm is chosen in this plan.</td></tr>
+  </tbody>
+</table>
+
+<h2>6. What to say in the examination</h2>
+<p>SENTRIX CORE will handle location, health-related signals, audio, and emergency alerts, so the project includes a security plan from the design stage. The plan is staged. Current experiments use externally collected datasets and must not send a real emergency alert. Development kits are laboratory tools. The custom band, if built, uses the physical SOS button in the Hardware Design Specification and does not claim a secure element that is not on that board. Guardians, nearby helpers, and cloud services are future architecture. Their access rules are written as a recommendation and are not yet a deployed control.</p>
+<p class="small">Supporting working files, kept with the project, are the detailed requirement matrix, hardware checklists, test plan, and decision register under the <em>security</em> folder. This PDF is the submission form of the security plan and the threat model.</p>
+
+</body>
+</html>

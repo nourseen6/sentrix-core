@@ -21,3 +21,19 @@ models/*.onnx
 models/*.bin
 models/*.pt
 models/*.pth
+
+# Local project files that are not published in this repository.
+SENTRIX_CORE_Research_Paper_v2.1 (1).pdf
+SentriX_Core_Collaboration_Brief.html
+SentriX_Core_Collaboration_Brief.pdf
+sentrix-logo.png
+README.md
+sentrix.docx
+~$*
+SENTRIX_CORE_Funding_Proposal_Form.html
+SENTRIX_CORE_Funding_Proposal_Form.pdf
+SENTRIX_CORE_Project_Funding_Proposal.html
+SENTRIX_CORE_Project_Funding_Proposal.pdf
+SENTRIX_CORE_University_Proposal.html
+SENTRIX_CORE_University_Proposal.pdf
+funding_form_assets/
