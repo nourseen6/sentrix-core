@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SentriX stage-one bench</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="mark">SENTRIX</span>
+      <div>
+        <h1>Stage-one bench</h1>
+        <p>Development kits, wired the way the connection sheet says. Faults block power. Notes stay visible.</p>
+      </div>
+    </div>
+    <div class="tools">
+      <button id="load" type="button">Load reference</button>
+      <button id="clear" type="button">Clear wires</button>
+      <button id="power" type="button" class="power">Apply power</button>
+      <button id="zoom-out" type="button" class="icon" aria-label="Zoom out">−</button>
+      <button id="zoom-in" type="button" class="icon" aria-label="Zoom in">+</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <div class="bench-wrap" id="bench-wrap">
+      <p class="hint">Drag to orbit, right-drag to pan, wheel to zoom. Click a pin, then another pin. Red power, black ground, gold I2C, blue SPI, green UART, purple PDM, orange GPIO.</p>
+    </div>
+
+    <aside class="side">
+      <section>
+        <h2>Rails and links</h2>
+        <p id="summary" class="summary">Faults 0</p>
+        <div id="chips" class="chips"></div>
+      </section>
+
+      <section>
+        <h2>DK switches</h2>
+        <label><input id="sw-vbat" type="checkbox" checked /> nPM1300 battery</label>
+        <label><input id="sw-vbus" type="checkbox" /> nPM1300 VBUS</label>
+        <label><input id="sw-sw10" type="checkbox" checked /> SW10 VEXT→nRF ON</label>
+        <label class="row">SW9
+          <select id="sw-sw9">
+            <option value="vdd" selected>VDD from P21</option>
+            <option value="usb">DK USB</option>
+          </select>
+        </label>
+        <label><input id="sw-modem" type="checkbox" checked /> nRF9151 USB</label>
+      </section>
+
+      <section>
+        <h2>Stimulus</h2>
+        <div class="seg" id="motion">
+          <button type="button" data-motion="rest" class="on">Rest</button>
+          <button type="button" data-motion="walk">Walk</button>
+          <button type="button" data-motion="fall">Fall</button>
+        </div>
+        <div class="seg" id="ppg">
+          <button type="button" data-ppg="none" class="on">No contact</button>
+          <button type="button" data-ppg="contact">Finger</button>
+        </div>
+        <div class="seg" id="phone">
+          <button type="button" data-phone="away" class="on">Phone away</button>
+          <button type="button" data-phone="near">Phone near</button>
+        </div>
+        <div class="seg" id="lte">
+          <button type="button" data-lte="up" class="on">LTE registered</button>
+          <button type="button" data-lte="down">No network</button>
+        </div>
+        <label class="row">Temperature <output id="temp-out">36.5</output> °C
+          <input id="temp" type="range" min="34" max="40" step="0.1" value="36.5" />
+        </label>
+        <label><input id="mic" type="checkbox" /> PDM test tone</label>
+        <button id="sos" type="button" class="sos">SOS · Button 1</button>
+      </section>
+
+      <section>
+        <h2>Selected</h2>
+        <div id="inspector"><p class="muted">Click a board or a pin.</p></div>
+      </section>
+
+      <section>
+        <h2>Check</h2>
+        <div id="checks"></div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="monitor">
+    <div class="monitor-head">
+      <h2>Serial</h2>
+      <svg id="wave" viewBox="0 0 320 48" preserveAspectRatio="none"></svg>
+    </div>
+    <pre id="log"></pre>
+  </section>
+
+  <script src="vendor/three.min.js"></script>
+  <script src="bench.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
